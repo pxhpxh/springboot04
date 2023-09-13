@@ -27,8 +27,8 @@ public class SJDBCAgent {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.info("数据连接获取异常：" + e.getMessage());
-			log.info("数据连接获取异常：" + e);
+			log.info("SJDBCAgent数据连接获取异常：" + e.getMessage());
+			log.info("SJDBCAgent数据连接获取异常：" + e);
 		}
 		return conn;
 	}
