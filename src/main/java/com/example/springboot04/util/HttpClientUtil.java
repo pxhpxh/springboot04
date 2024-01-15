@@ -1,10 +1,7 @@
 package com.example.springboot04.util;
 
 import com.alibaba.fastjson.JSON;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.ParseException;
+import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -280,7 +277,7 @@ public class HttpClientUtil {
         CloseableHttpResponse response = null;
         try {
             //将请求参数添加到方法中
-            StringEntity entity = new StringEntity(params);
+            StringEntity entity = new StringEntity(params, Consts.UTF_8);
             httpPost.setEntity(entity);
 
             // 由客户端执行(发送)Post请求

@@ -357,4 +357,54 @@ public class UserServiceTest {
         map.put("a",map.get("a") + 1);
     }
 
+    @Test
+    public void test67() {
+        System.out.println(32);
+        System.out.println("" + 33);
+        try {
+            add123();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            System.out.println(132);
+        }
+    }
+
+    public void add123() throws RuntimeException{
+        System.out.println(213);
+        try {
+            throw  new RuntimeException("132");
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            throw  new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void test68() {
+        String json = "{\"title\":\"json在线解析（简版） -JSON在线解析\",\"json.url\":\"https://www.sojson.com/simple_json.html\",\"keywords\":\"json在线解析\",\"功能\":[\"JSON美化\",\"JSON数据类型显示\",\"JSON数组显示角标\",\"高亮显示\",\"错误提示\",{\"备注\":[\"www.sojson.com\",\"json.la\"]}],\"加入我们\":{\"qq群\":\"259217951\"}}";
+       JSONObject jsonObject = JSONObject.parseObject(json);
+       jsonObject.remove("title");
+        jsonObject.remove("json.url");
+        System.out.println(jsonObject.toJSONString());
+        System.out.println(json);
+
+        Map map = new HashMap();
+        map.remove("ss1");
+        System.out.println(map);
+
+    }
+
+    @Test
+    public void test69() {
+        System.out.println(JSON.toJSONString(null));
+
+        Map map = new HashMap();
+        map.put("ss","");
+        map.put("ssd",null);
+
+        System.out.println(JSON.toJSONString(map));
+
+    }
+
+
 }

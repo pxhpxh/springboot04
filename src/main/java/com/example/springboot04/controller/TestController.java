@@ -2,10 +2,12 @@ package com.example.springboot04.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.example.springboot04.util.TextEncoder;
+import com.example.springboot04.util.*;
 import org.apache.logging.log4j.util.Base64Util;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.util.DateUtils;
+import org.thymeleaf.util.MapUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,7 +15,9 @@ import javax.xml.transform.Result;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.sql.*;
 import java.util.*;
+import java.util.Date;
 
 @Controller
 public class TestController {
@@ -150,4 +154,115 @@ public class TestController {
         System.out.println(123456);
         return  JSON.toJSONString(ret);
     }
+
+    @RequestMapping("/test/getu8cData")
+    public void getu8cData(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        List<Map<String,Object>>  retDataList = new ArrayList<>();
+        Connection con = SJDBCAgent.getConnection("Oracle", "192.168.31.27",
+                "1521", "ORCL", "u8c", "u8c");
+        Statement statement  = null;
+        ResultSet rs = null;
+        try {
+            statement = con.createStatement();
+            String sql = "SELECT  de.pk_detail MXID, max(de.pk_voucher) PZID , max(de.prepareddatev)  ZDDATE,\n" +
+                    "max(de.localcreditamount) DFJE,max(de.localdebitamount) YSJE,max(de.discardflagv) ZFFLAG,max(de.dr) DELEFLAG,\n" +
+                    "max(de.explanation) ZY  , \n" +
+                    "max(TY.vouchtypename||' '||de.nov )  GZPZH  , max(book.glorgbookcode) GZZT,\n" +
+                    "\n" +
+                    "max(CASE  WHEN free.checktype = '00010000000000000073' THEN  free.valuename  ELSE  ''  END)  YSDW ,\n" +
+                    "max(CASE  WHEN free.checktype = '00010000000000000002' THEN  free.valuename  ELSE  ''  END) BMDA \n" +
+                    "from   gl_detail   de\n" +
+                    "LEFT JOIN    bd_vouchertype  ty on  DE.PK_VOUCHERTYPEV = TY.PK_VOUCHERTYPE\n" +
+                    "LEFT JOIN    bd_glorgbook  book  on  DE.pk_glorgbook = book.pk_glorgbook\n" +
+                    "LEFT JOIN   bd_glorg   gl on book.pk_glorg    = GL.pk_glorg  and  DE.pk_glorg = book.pk_glorg\n" +
+                    "LEFT JOIN  GL_FREEVALUE free  on  de.assid  = free.freevalueid \n" +
+                    "LEFT JOIN  bd_accsubj  bj  on  bj.pk_accsubj = De.pk_accsubj\n" +
+                    "WHERE  de.discardflagv = 'N' and   de.dr = '0'  \n" +
+                    "GROUP BY de.pk_detail\n" +
+                    "ORDER BY    ZDDATE desc ,  GZPZH ,  PZID ";
+            // 4.execute()方法执行SQL，得到一个ResultSet结果集
+            rs = statement.executeQuery(sql);
+            // 5.通过遍历ResultSet结果集得到数据，给POJO赋值处理数据，最终返回POJO
+            while (rs.next()) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("mxId",rs.getString("MXID"));
+                map.put("ysje",rs.getString("YSJE"));
+                retDataList.add(map);
+            }
+            System.out.println(retDataList);
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            //6、关闭资源
+            if(rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+            try {
+                statement.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            try {
+                con.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+    }
+
+
+
+
+    @RequestMapping("/test/kp")
+    public void testKp(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        String kpInfo = "{\"type\":\"4\",\"buyerTel\":\"0358-3053345\",\"fpType\":\"-9156018013302206750\",\"naturalPersonFlag\":\"0\",\"buyerBankAccount\":\"621700002000678\",\"fpGroupNo\":\"4\",\"buyerName\":\"北京票通信息技术有限公司\",\"buyerAddress\":\"北京海淀区万泉庄路\",\"invoiceIssueKindCode\":\"82\"," +
+                "\"buyerBankName\":\"建设银行\",\"invoiceReqSerialNo\":\"SCPT2309191355114j21\",\"buyerTaxpayerNum\":\"92110108MA0043365M\",\"drawerName\":\"pxh\"," +
+                "\"itemList\":[{\"unitPrice\":\"100.00\",\"taxRateAmount\":\"8.26\",\"taxRateValue\":\"0.09\",\"specificationModel\":\"规格12\",\"quantity\":\"1\"," +
+                "\"invoiceAmount\":\"100.00\",\"taxClassificationCode\":\"1010101020000000000\",\"includeTaxFlag\":1,\"goodsName\":\"货运粮食\",\"meteringUnit\":\"次\"}]," +
+                "\"taxpayerNum\":\"500102201007206608\"}";
+        String context = DesECBUtil.encryptDES(kpInfo,"abcd=1234");
+
+        String pars = "";
+        pars += "code=X1hVH8X6";
+        pars += "&content=" + URLEncoder.encode(context);
+        pars += "&serialNo=X1hVH8X6" + Datetimes.format(new Date(),Datetimes.datetimeStyle);
+        pars += "&timestamp=" + Datetimes.format(new Date(),Datetimes.datetimeStyle);
+        pars += "&version=1.0";
+        pars += "&sign=123456";
+        pars += "&code1=哈德的第三方";
+        //https://a3u3946727.yicp.fun/kf1034/login
+        String ret = HttpClientUtil.sendPost("http://localhost:8086/kf1034/api/addInvoice.do", pars);
+      //  String ret = HttpClientUtil.sendPost("http://211.149.136.84:6270/kf1034/api/addInvoice.do", pars);
+
+        System.out.println("132456");
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

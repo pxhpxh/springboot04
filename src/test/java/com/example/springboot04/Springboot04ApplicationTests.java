@@ -19,6 +19,7 @@ class Springboot04ApplicationTests {
     }
 
 
+
     @Test
     void test2() {
         Vector v = new Vector(10);
@@ -34,5 +35,15 @@ class Springboot04ApplicationTests {
         }
 
     }
+
+
+    @Test
+    void test3() {
+        Math.round(1);
+
+        double  a = (double)  101555l / 1000;
+        System.out.println(a);
+    }
+
 
 }
