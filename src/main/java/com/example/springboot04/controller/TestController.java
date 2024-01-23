@@ -3,7 +3,9 @@ package com.example.springboot04.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.springboot04.util.*;
+import org.apache.http.HttpHeaders;
 import org.apache.logging.log4j.util.Base64Util;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.util.DateUtils;
@@ -24,7 +26,6 @@ public class TestController {
 
     @RequestMapping("/test1")
     public void danDianLogin(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
         Date date = new Date();
         String yyyyMMddHHmmss = "20120202111122";
 
@@ -259,7 +260,19 @@ public class TestController {
 
 
 
-
+    @RequestMapping("/sso/api/SSOService/GetUser")
+    @ResponseBody
+    public Map getUser(HttpServletRequest req, HttpServletResponse response) {
+        Map<String,String> map  = new HashMap<>();
+        response.setHeader("Content-Type","application/json;charset=utf8");
+        String header = req.getHeader(HttpHeaders.AUTHORIZATION);
+        if(Strings.isBlank(header)){
+            map.put("message","内容错误");
+            return  map ;
+        }
+        map.put("Identity","pxh");
+        return  map ;
+    }
 
 
 
