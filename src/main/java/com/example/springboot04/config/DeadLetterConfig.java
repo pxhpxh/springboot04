@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * @description
  * @date 2022/2/10 15:04
  */
-//@Configuration
+@Configuration
 public class DeadLetterConfig {
 
     public static final String NORMAL_EXCHANGE = "normal-exchange";

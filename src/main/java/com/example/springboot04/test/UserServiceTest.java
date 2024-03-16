@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.example.springboot04.Springboot04Application;
 import com.example.springboot04.bean.User;
 import io.swagger.models.auth.In;
@@ -14,6 +15,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.thymeleaf.util.ListUtils;
 import sun.applet.AppletClassLoader;
 import sun.misc.Launcher;
 
@@ -404,7 +406,21 @@ public class UserServiceTest {
 
         System.out.println(JSON.toJSONString(map));
 
+        System.out.println(String.format("%02d",2));
+        String format = String.format("%02d", "2");
+
     }
 
+    @Test
+    public void test70() {
+
+        String jsonString = "{\"key1\":[{\"value1\":{\"key2\":\"value\"}}]}";
+
+        Map<String, List<Map<String, Object>>>  map = JSON.parseObject(jsonString, new TypeReference<Map<String, List<Map<String, Object>>>>() {});
+
+        System.out.println(map);
+
+
+    }
 
 }

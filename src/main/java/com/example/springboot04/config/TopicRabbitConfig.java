@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
  * @Description :
  **/
 
-//@Configuration
+@Configuration
 public class TopicRabbitConfig {
     //绑定键
     public final static String man = "topic.man";

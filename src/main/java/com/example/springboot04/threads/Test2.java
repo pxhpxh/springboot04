@@ -2,10 +2,7 @@ package com.example.springboot04.threads;
 
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @ClassName Test2
@@ -18,12 +15,14 @@ import java.util.concurrent.TimeUnit;
 public class Test2 {
 
     public static void main(String[] args) {
-        ExecutorService pool = new ThreadPoolExecutor(5, 20, 5,//直接提交队列，队列中不能存任务
+        ExecutorService pool = new ThreadPoolExecutor(10, 20, 30,//队列满了就会新建线程
                 TimeUnit.SECONDS,new ArrayBlockingQueue<>(200), Executors.defaultThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
         try {
             for (int i = 0; i < 100; i++) {
                 ThreadDemo threadDemo = new ThreadDemo();
                 pool.execute(threadDemo);
+                //Future<Integer> future = pool.submit(new CallableDemo(100));
+                //System.out.println(future.get());
             }
         } catch (Exception e) {
             e.printStackTrace();

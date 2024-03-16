@@ -33,6 +33,8 @@ public class RabbitConfig {
 
     @Bean
     public ConnectionFactory connectionFactory() {
+        System.out.println(username);
+        System.out.println(password);
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory(host,port);
         connectionFactory.setUsername(username);
         connectionFactory.setPassword(password);
